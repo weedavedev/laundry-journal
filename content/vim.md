@@ -1,94 +1,113 @@
 ---
-title: Linux
+title: Vim
 date: 2025-04-02
 updated: 2025-04-02
-tags: [linux, commands, operating-system, ubuntu]
-category: operating-systems
+tags: [vim, text-editor, linux, productivity]
+category: tools
 ---
 
-# Linux
+# Vim
 
 ## Table of Contents
 <!-- This section will be automatically generated -->
 
 ## Overview
-Learnings of linux and how the master OS works.
-Main OS is ubuntu.
+Vim is a highly configurable text editor built to make creating and changing any kind of text very efficient. It is included as "vi" with most UNIX systems and with Apple OS X.
 
-## Fundamentals
-Some of the basic linux commands i initially wrote down, and some that i have actually used alot!
+## Basic Navigation
+Moving around in Vim requires understanding its modal nature and keyboard shortcuts.
 
-### System Information
-Some of the most basic and useful tools in linux are just a few charectors away, quicker than going via control panel in windows!
+### Modes
+**Purpose**: Vim operates in different modes for different tasks.
 
-**Commands list**
+**Main Modes**: 
 ```
-whoami - show current username
-uname - OS name and harware details
-hostname current host name
-pwd - show the present working directory
+Normal Mode - Default mode for navigation and commands
+Insert Mode - For inserting/editing text
+Visual Mode - For selecting text
+Command Mode - For entering commands with ":"
 ```
 
 **Examples**:
 ```
-$ whoami
-username
-
-$ uname -a
-Linux hostname 5.15.0-89-generic #99-Ubuntu SMP Wed Feb 7 12:24:14 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Press 'i' to enter Insert mode from Normal mode
+Press <Esc> to return to Normal mode from any other mode
+Press 'v' to enter Visual mode from Normal mode
 ```
 
 **Notes**:
-- These commands work across most Linux distributions
-- Many have additional options with flags like `-a` for "all"
+- Always know which mode you're in (check bottom of screen)
+- <Esc> is your safe key - when in doubt, press it to return to Normal mode
 
-### System Resources
-**Purpose**: There is a lot of useful information inside your computer. These are some of the easiest ways to extract that information in Linux.
+### Movement Commands
+**Purpose**: Efficiently navigate through text without using a mouse.
 
 **Syntax/Format**: 
 ```
-lsblk - show all block devices (#storage)
-lsusb - show all connected USB devices
-lsof - show all open files
-lspci - show all PCI devices connected (#graphics)
+h - move cursor left
+j - move cursor down
+k - move cursor up
+l - move cursor right
+w - jump to start of next word
+b - jump to start of previous word
+0 - jump to start of line
+$ - jump to end of line
 ```
 
 **Examples**:
 ```
-$ lsblk -f
-NAME   FSTYPE   LABEL UUID                                 MOUNTPOINT
-sda                                                        
-├─sda1 ext4           6197e068-42a7-4d0c-aa3a-fd9b0ce87332 /
-└─sda2 swap           4f2635d8-e6e0-4c19-8228-23787769c321 [SWAP]
+5j - move down 5 lines
+3w - move forward 3 words
+2b - move back 2 words
 ```
 
 **Notes**:
-- The `ls` prefix stands for "list"
-- These commands often need root privileges to show all information
+- Combine numbers with commands to repeat them
+- These commands only work in Normal mode
 
-## File Management
-Description of basic file management commands in Linux.
+## Text Editing
+Basic commands for editing text in Vim.
 
-### Navigation and Viewing
-**Purpose**: Moving around the file system and seeing file content.
+### Inserting Text
+**Purpose**: Enter text editing mode.
 
 **Syntax/Format**: 
 ```
-ls - list directory contents
-cd - change directory
-cat - view file contents
-less - view file contents with pagination
+i - insert before cursor
+a - insert after cursor
+I - insert at beginning of line
+A - insert at end of line
+o - open new line below cursor
+O - open new line above cursor
 ```
 
 **Examples**:
 ```
-$ ls -la
-total 20
-drwxr-xr-x 3 user user 4096 Apr  2 10:30 .
-drwxr-xr-x 6 user user 4096 Apr  2 10:25 ..
--rw-r--r-- 1 user user  123 Apr  2 10:30 example.txt
+i Hello<Esc> - insert the word "Hello" and return to Normal mode
+A world<Esc> - append " world" at the end of the current line
 ```
 
 **Notes**:
-- Use `cd ..` to move up one directory
-- Use `cd ~` to go to your home directory
+- Always return to Normal mode after editing by pressing <Esc>
+- Most Vim users spend most of their time in Normal mode, entering Insert mode briefly to make changes
+
+### Deleting Text
+**Purpose**: Remove text efficiently.
+
+**Syntax/Format**: 
+```
+x - delete character under cursor
+dd - delete current line
+dw - delete from cursor to end of word
+d$ - delete from cursor to end of line
+```
+
+**Examples**:
+```
+3dd - delete 3 lines
+d2w - delete 2 words forward
+```
+
+**Notes**:
+- Deleted text is copied to a register and can be pasted
+- Combine numbers with delete commands to delete multiple items

@@ -1,78 +1,95 @@
 ---
-title: TOPIC_TITLE
-date: CREATION_DATE
-updated: LAST_UPDATED_DATE
+title: Topic Title
+date: YYYY-MM-DD
+updated: YYYY-MM-DD
 tags: [tag1, tag2, tag3]
-category: MAIN_CATEGORY
+category: main-category
 ---
 
-# TOPIC_TITLE
+# Topic Title
 
 ## Table of Contents
 <!-- This section will be automatically generated -->
 
 ## Overview
+
 Brief introduction to the topic and why it's important. This section should give a high-level understanding of what this resource covers and its practical applications.
 
-## SECTION_1
+## Section 1
+
 Description of this section and its relevance to the main topic.
 
-### SUBSECTION_1.1
+### Subsection 1.1
+
 **Purpose**: What this concept/command/technique is used for.
 
 **Syntax/Format**: 
+
 ```
-SYNTAX_PLACEHOLDER
+syntax_placeholder
 ```
 
 **Examples**:
+
 ```
-EXAMPLE_1
+example_1
 ```
 
 ```
-EXAMPLE_2
+example_2
 ```
 
 **Notes**:
-- NOTE_1
-- NOTE_2
 
-### SUBSECTION_1.2
+- Note 1
+- Note 2
+
+### Subsection 1.2
+
 **Purpose**: What this concept/command/technique is used for.
 
 **Syntax/Format**: 
+
 ```
-SYNTAX_PLACEHOLDER
+syntax_placeholder
 ```
 
 **Examples**:
+
 ```
-EXAMPLE_1
+example_1
 ```
 
 **Notes**:
-- NOTE_1
 
-## SECTION_2
+- Note 1
+
+## Section 2
+
 Description of this section and its relevance to the main topic.
 
-### SUBSECTION_2.1
+### Subsection 2.1
+
 **Purpose**: What this concept/command/technique is used for.
 
 **Syntax/Format**: 
+
 ```
-SYNTAX_PLACEHOLDER
+syntax_placeholder
 ```
 
 **Examples**:
+
 ```
-EXAMPLE_1
+example_1
 ```
 
 **Notes**:
-- NOTE_1
+
+- Note 1
 
 ## General Notes
-- GENERAL_NOTE_1
-- GENERAL_NOTE_2
+
+- General note 1
+- General note 2
+- Important reference: [Resource Name](https://example.com)
