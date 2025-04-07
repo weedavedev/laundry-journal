@@ -18,7 +18,8 @@ This repository serves as my digital learning journal - a place to document and 
 .
 ├── assets/               # Static assets for the viewer
 │   ├── css/              # Stylesheets
-│   └── js/               # JavaScript files
+│   ├── js/               # JavaScript files
+│   └── markdown-viewer.html  # Main HTML template
 ├── content/              # Markdown files containing knowledge
 │   ├── TEMPLATE.md       # Template for new entries
 │   └── *.md              # Individual topic files
@@ -78,8 +79,27 @@ Then open your browser to http://localhost:8000
 
 The viewer is built with:
 - **Go**: Simple and fast HTTP server
-- **JavaScript**: Browser-side rendering of markdown
+- **JavaScript**: Browser-side rendering of markdown with Marked.js
 - **CSS**: GitHub-inspired styling
+- **HTML**: Responsive and accessible design
+
+## Markdown Guidelines
+
+To ensure proper rendering and consistent formatting:
+
+1. **Avoid square brackets in headings** - Use plain text for section headers
+2. **Add spacing after code blocks** - Include a blank line after each code block
+3. **Use standard frontmatter format**:
+   ```
+   ---
+   title: Topic Name
+   date: YYYY-MM-DD
+   updated: YYYY-MM-DD
+   tags: [tag1, tag2, tag3]
+   category: category-name
+   ---
+   ```
+4. **Follow the template structure** - Maintain consistent heading levels and formatting
 
 ## Future Plans
 
@@ -87,6 +107,17 @@ The viewer is built with:
 - Full-text search capabilities
 - Spaced repetition system for revisiting important concepts
 - Visualization of learning journey and connections between topics
+- GitHub Pages integration for public sharing
+- Mobile app with offline capabilities
+
+## Getting Started
+
+If you're forking or cloning this repository:
+
+1. Ensure Go is installed on your system
+2. Clone the repository
+3. Run `./markdown-server.sh` to start the server
+4. Begin adding your own content to the `content/` directory
 
 ---
 
