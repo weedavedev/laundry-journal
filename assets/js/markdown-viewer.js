@@ -155,42 +155,71 @@ function showMarkdownError(title, error, markdownContent) {
   `;
 }
 
-// Safe markdown parsing function that catches common errors
+// Safe markdown parsing function with specific fixes for your issues
 function safeMarkdownParse(markdown, errorsArray = []) {
   try {
-    // Use a custom renderer to avoid toLowerCase issues
+    // Create a custom renderer
     const renderer = new marked.Renderer();
     
-    // Track problematic sections
-    renderer.heading = function(text, level, raw, slugger) {
-      // Check for square brackets in headings which cause problems
-      if (raw && (raw.includes('[') || raw.includes(']'))) {
-        errorsArray.push(new Error(`Heading "${raw}" contains square brackets which can cause rendering issues`));
+    // Fix the heading renderer to handle object issues
+    renderer.heading = function(text, level, raw) {
+      // Fix for [object Object] issues - convert objects to strings properly
+      if (typeof text === 'object') {
+        console.log('Found object in heading text:', text);
+        text = JSON.stringify(text) || 'Heading';
       }
       
-      // Safely generate ID
+      if (typeof raw === 'object') {
+        console.log('Found object in heading raw:', raw);
+        raw = JSON.stringify(raw) || 'heading';
+      }
+      
+      // Ensure raw is a string
+      if (!raw || typeof raw !== 'string') {
+        raw = String(text || '').trim();
+        errorsArray.push(new Error('Undefined or non-string heading text encountered'));
+      }
+      
+      // Generate an ID - safely
       let id = '';
       try {
-        if (raw === undefined || raw === null) {
-          raw = text || '';
-          errorsArray.push(new Error('Undefined heading text encountered'));
-        }
-        id = raw.toLowerCase().replace(/[^\w]+/g, '-');
+        // Avoid toLowerCase issues by ensuring raw is a string
+        id = raw.toString().toLowerCase().replace(/[\s\W-]+/g, '-');
       } catch (e) {
+        console.error('Error creating heading ID:', e);
         id = 'heading-' + Math.random().toString(36).substring(2, 10);
-        errorsArray.push(e);
+        errorsArray.push(new Error('Error creating heading ID: ' + e.message));
       }
       
       return `<h${level} id="${id}">${text}</h${level}>`;
     };
     
-    // Check for other syntax issues
-    if (markdown.includes('[object Object]')) {
-      errorsArray.push(new Error('Found "[object Object]" in content, which may indicate template issues'));
-    }
+    // Override list methods too, as they can cause similar issues
+    renderer.listitem = function(text) {
+      if (typeof text === 'object') {
+        text = JSON.stringify(text) || '';
+      }
+      return `<li>${text}</li>`;
+    };
     
-    // Set marked options
-    const options = {
+    // Fix code blocks
+    renderer.code = function(code, language) {
+      if (typeof code === 'object') {
+        code = JSON.stringify(code, null, 2) || '';
+      }
+      return `<pre><code class="language-${language}">${escapeHtml(code)}</code></pre>`;
+    };
+    
+    // Fix paragraphs
+    renderer.paragraph = function(text) {
+      if (typeof text === 'object') {
+        text = JSON.stringify(text) || '';
+      }
+      return `<p>${text}</p>`;
+    };
+    
+    // Set marked options with much higher safety
+    marked.setOptions({
       renderer: renderer,
       headerIds: true,
       gfm: true,
@@ -198,20 +227,25 @@ function safeMarkdownParse(markdown, errorsArray = []) {
       pedantic: false,
       smartLists: true,
       smartypants: false,
-      silent: true
-    };
+      mangle: false, // Disable mangling to avoid ID issues
+      silent: true   // Don't throw fatal errors
+    });
     
-    return marked.parse(markdown, options);
+    // Pre-process markdown to catch common issues
+    const preprocessed = markdown
+      // Replace any [object Object] literals that might be in the text
+      .replace(/\[object Object\]/g, '_Object_');
+    
+    return marked.parse(preprocessed);
   } catch (e) {
-    console.error("Error in markdown parsing:", e);
+    console.error("Fatal error in markdown parsing:", e);
     errorsArray.push(e);
     
-    // Fallback to basic HTML conversion
+    // Fallback to basic escaping
     return `<p>Error parsing markdown. Displaying raw content:</p>
             <pre>${escapeHtml(markdown)}</pre>`;
   }
 }
-
 // Helper function to escape HTML
 function escapeHtml(text) {
   if (text === undefined || text === null) return '';
