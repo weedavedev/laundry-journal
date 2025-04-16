@@ -15,4 +15,19 @@ const config = {
 	}
 };
 
-export default config;
+export default {
+  kit: {
+    adapter: adapter({
+      fallback: '404.html',
+      precompress: false,
+      strict: true
+    }),
+    files: {
+      assets: 'static',
+      lib: 'src/lib',
+      routes: 'src/routes',
+      serviceWorker: 'src/service-worker',
+      appTemplate: 'src/app.html'
+    }
+  }
+};
