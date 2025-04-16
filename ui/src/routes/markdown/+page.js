@@ -3,6 +3,9 @@ import { getAllMarkdownFiles } from '$lib/markdown-loader.js';
 
 export async function load() {
   try {
+    // Add a slight delay to see if it helps with race condition
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     const markdownFiles = await getAllMarkdownFiles();
     
     console.log('Markdown files loaded:', markdownFiles);
@@ -11,19 +14,11 @@ export async function load() {
       markdownFiles
     };
   } catch (err) {
-    // Log the full error details
-    console.error('Detailed error:', {
-      message: err.message,
-      name: err.name,
-      stack: err.stack,
-      // Include any additional error properties
-      ...err
-    });
-
-    // Throw a more informative error
-    throw error(500, {
-      message: 'Failed to load markdown files',
-      details: err.message
-    });
+    console.error('Error in page load:', err);
+    
+    // Return an empty array instead of throwing an error
+    return {
+      markdownFiles: []
+    };
   }
 }

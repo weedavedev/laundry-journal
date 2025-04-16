@@ -3,8 +3,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [sveltekit()],
-  // Optional: add explicit file inclusion
-  optimizeDeps: {
-    include: ['../content/**/*.md']
+  assetsInclude: ['**/*.md'], // Add this line to include markdown files
+  server: {
+    fs: {
+      // Allow serving files from one directory up
+      allow: ['..']
+    }
   }
 });
