@@ -1,16 +1,12 @@
 <script>
-  /** @type {import('./$types').PageData} */
   export let data;
 
-  // Comprehensive logging
   $: {
-    console.log('🧩 Full data object:', data);
-    console.log('📄 Markdown files:', data?.markdownFiles);
-    console.log('📏 Number of files:', data?.markdownFiles?.length);
+    console.log('Page data:', data);
   }
 </script>
 
-{#if data?.markdownFiles?.length}
+{#if data.markdownFiles && data.markdownFiles.length > 0}
   <div class="markdown-list">
     {#each data.markdownFiles as file}
       <article class="markdown-item">
@@ -20,13 +16,7 @@
     {/each}
   </div>
 {:else}
-  <div class="no-files-warning">
-    <p>No markdown files found.</p>
-    <details>
-      <summary>Debug Information</summary>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </details>
-  </div>
+  <p>No markdown files found.</p>
 {/if}
 
 <style>
@@ -40,14 +30,6 @@
     margin-bottom: 2rem;
     padding: 1rem;
     border: 1px solid #eee;
-    border-radius: 8px;
-  }
-
-  .no-files-warning {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 1rem;
-    margin: 1rem;
     border-radius: 8px;
   }
 </style>

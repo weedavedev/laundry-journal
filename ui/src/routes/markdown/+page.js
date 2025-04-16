@@ -1,18 +1,22 @@
+import { error } from '@sveltejs/kit';
 import { getAllMarkdownFiles } from '$lib/markdown-loader.js';
 
 export async function load() {
   try {
+    // Add a slight delay to see if it helps with race condition
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     const markdownFiles = await getAllMarkdownFiles();
     
-    console.log('🚀 Page load - Markdown files:', markdownFiles.length);
-    console.log('🔍 First file details:', markdownFiles[0]);
+    console.log('Markdown files loaded:', markdownFiles);
 
-    // Explicitly stringify and parse to ensure full serialization
     return {
-      markdownFiles: JSON.parse(JSON.stringify(markdownFiles))
+      markdownFiles
     };
   } catch (err) {
-    console.error('❌ Error in page load:', err);
+    console.error('Error in page load:', err);
+    
+    // Return an empty array instead of throwing an error
     return {
       markdownFiles: []
     };

@@ -1,0 +1,1 @@
+../content/TEMPLATE.md
