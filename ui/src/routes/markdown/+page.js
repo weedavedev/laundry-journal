@@ -11,9 +11,19 @@ export async function load() {
       markdownFiles
     };
   } catch (err) {
-    console.error('Error in page load:', err);
-    return {
-      markdownFiles: []
-    };
+    // Log the full error details
+    console.error('Detailed error:', {
+      message: err.message,
+      name: err.name,
+      stack: err.stack,
+      // Include any additional error properties
+      ...err
+    });
+
+    // Throw a more informative error
+    throw error(500, {
+      message: 'Failed to load markdown files',
+      details: err.message
+    });
   }
 }
