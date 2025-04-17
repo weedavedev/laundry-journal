@@ -5,6 +5,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,9 +29,14 @@ jobs:
         env:
           BASE_PATH: '/laundry-journal'
       
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Create .nojekyll file
+        run: touch ui/build/.nojekyll
+      
+      - name: List build files
+        run: ls -la ui/build/
+      
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          folder: ui/build  # This is the built content we want at the root
-          branch: gh-pages  # Using a new branch to avoid conflicts
-          clean: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ui/build
