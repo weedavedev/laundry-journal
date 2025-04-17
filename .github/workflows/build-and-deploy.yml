@@ -1,12 +1,15 @@
-name: Build and Deploy Learning Journal
+name: Build and Deploy SvelteKit App
 on:
   push:
     branches: [ main ]
     paths:
       - 'content/**'
       - 'ui/**'
+      - 'src/**'
       - '.github/workflows/**'
       - 'README.md'
+      - 'package.json'
+      - 'svelte.config.js'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -15,24 +18,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      # Create a simple test HTML file
-      - name: Create test index file
-        run: |
-          mkdir -p test_deploy
-          # Create a .nojekyll file to disable Jekyll processing
-          touch test_deploy/.nojekyll
-          # Create a simple HTML test file
-          echo "<html><head><title>Test Page</title></head><body><h1>Test Deployment</h1><p>This is a test page to verify GitHub Pages deployment is working.</p></body></html>" > test_deploy/index.html
-          
-      # Deploy the test page to GitHub Pages
-      - name: Deploy test page to GitHub Pages
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build SvelteKit app
+        run: npm run build
+        
+      - name: Add .nojekyll file
+        run: touch build/.nojekyll
+      
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: test_deploy
+          folder: build  # This should match your adapter-static output folder
           branch: svelte_frontend
           clean: true
-      
-      - name: Output test page information
-        run: |
-          echo "Deployed test page to GitHub Pages"
-          echo "View your site at https://weedavedev.github.io/laundry-journal/"
