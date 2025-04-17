@@ -1,5 +1,4 @@
 name: Build and Deploy Learning Journal
-
 on:
   push:
     branches: [ main ]
@@ -8,7 +7,6 @@ on:
       - 'ui/**'
       - '.github/workflows/**'
       - 'README.md'
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -47,16 +45,39 @@ jobs:
           # Create a .nojekyll file to prevent GitHub Pages from using Jekyll
           touch build/.nojekyll
           
-          # Create a basic index.html if it doesn't exist
+          # Check if index.html exists in the expected location
           if [ ! -f "build/index.html" ]; then
-            echo "WARNING: No index.html found in build directory. Creating a basic one..."
-            echo "<html><head><meta http-equiv=\"refresh\" content=\"0;url=/$GITHUB_REPOSITORY_NAME_PART/\"></head><body>Redirecting...</body></html>" > build/index.html
+            echo "WARNING: No index.html found in build directory. This may indicate a build configuration issue."
+            
+            # Check if there's an index.html in a subdirectory
+            INDEX_FILES=$(find build -name "index.html")
+            if [ -n "$INDEX_FILES" ]; then
+              echo "Found index.html file(s) in subdirectories:"
+              echo "$INDEX_FILES"
+            fi
+            
+            # Create a simple redirect index.html at the root
+            echo "Creating a fallback index.html..."
+            cat > build/index.html << 'EOL'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Journal</title>
+  <meta http-equiv="refresh" content="0;url=./laundry-journal/">
+</head>
+<body>
+  <p>Redirecting to the Learning Journal...</p>
+  <p>If you are not redirected, <a href="./laundry-journal/">click here</a>.</p>
+</body>
+</html>
+EOL
           fi
         env:
           NODE_ENV: production
           # Set base path for GitHub Pages - this should match your repository name
           BASE_PATH: '/laundry-journal'
-          GITHUB_REPOSITORY_NAME_PART: "laundry-journal"
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -68,5 +89,4 @@ jobs:
       - name: Output Deployment Information
         run: |
           echo "Deployed to GitHub Pages"
-          echo "View your site at https://YOUR_USERNAME.github.io/Laundry_journal/"
-          echo "Note: Replace YOUR_USERNAME with your actual GitHub username"
+        echo "View your site at https://weedavedev.github.io/laundry-journal/"
