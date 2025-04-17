@@ -1,0 +1,20 @@
+set hidden
+set switchbuf=useopen
+badd src/app.css
+badd src/app.d.ts
+badd svelte.config.js
+badd package.json
+badd src/routes/+layout.svelte
+badd src/routes/+page.svelte
+badd src/routes/+page.js
+badd src/routes/[slug]/+page.svelte
+badd src/routes/[slug]/+page.js
+badd src/lib/components/Layout.svelte
+badd src/lib/components/markdown-loader.js
+badd src/lib/components/TableOfContents.svelte
+badd src/lib/index.ts
+badd src/scripts/generate-content-index.js
+nnoremap <F2> :buffers<CR>:buffer<Space>
+nnoremap <F3> :bnext<CR>
+nnoremap <F4> :bprev<CR>
+echo "Use F2 to list buffers, F3/F4 to navigate between files"

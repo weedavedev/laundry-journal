@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,19 +8,24 @@ const config = {
   preprocess: vitePreprocess(),
 
   kit: {
-    // Use the static adapter for GitHub Pages
+    // adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
+    // If your environment is not supported, or you settled on a specific environment, switch to an adapter for that platform.
     adapter: adapter({
-      // GitHub Pages deployment specific settings
+      // default options are shown
       pages: 'build',
       assets: 'build',
       fallback: 'index.html',
-      precompress: false
+      precompress: false,
+      strict: true
     }),
     
-    // If your GitHub Pages site is hosted at a subdirectory (e.g., username.github.io/learning-journal)
-    // uncomment and set this:
     paths: {
-      base: '/learning-journal'
+      base: '/laundry-journal'
+    },
+    
+    // This is important - it tells SvelteKit to prerender the index page
+    prerender: {
+      entries: ['/']
     }
   }
 };
