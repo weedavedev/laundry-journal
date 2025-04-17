@@ -58,21 +58,19 @@ jobs:
             
             # Create a simple redirect index.html at the root
             echo "Creating a fallback index.html..."
-            cat > build/index.html << 'EOL'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learning Journal</title>
-  <meta http-equiv="refresh" content="0;url=./laundry-journal/">
-</head>
-<body>
-  <p>Redirecting to the Learning Journal...</p>
-  <p>If you are not redirected, <a href="./laundry-journal/">click here</a>.</p>
-</body>
-</html>
-EOL
+            echo '<!DOCTYPE html>' > build/index.html
+            echo '<html lang="en">' >> build/index.html
+            echo '<head>' >> build/index.html
+            echo '  <meta charset="UTF-8">' >> build/index.html
+            echo '  <meta name="viewport" content="width=device-width, initial-scale=1.0">' >> build/index.html
+            echo '  <title>Learning Journal</title>' >> build/index.html
+            echo '  <meta http-equiv="refresh" content="0;url=./laundry-journal/">' >> build/index.html
+            echo '</head>' >> build/index.html
+            echo '<body>' >> build/index.html
+            echo '  <p>Redirecting to the Learning Journal...</p>' >> build/index.html
+            echo '  <p>If you are not redirected, <a href="./laundry-journal/">click here</a>.</p>' >> build/index.html
+            echo '</body>' >> build/index.html
+            echo '</html>' >> build/index.html
           fi
         env:
           NODE_ENV: production
