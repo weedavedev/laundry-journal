@@ -23,12 +23,7 @@ jobs:
           cache-dependency-path: 'ui/package-lock.json'
       
       - name: Copy Content to UI
-        run: |
-          # Ensure the content is available to the UI during build
-          mkdir -p ui/src/content
-          cp -r content/*.md ui/src/content/
-          echo "Content files copied to UI build location:"
-          ls -la ui/src/content/
+        run: mkdir -p ui/src/content && cp -r content/*.md ui/src/content/
       
       - name: Install Dependencies
         working-directory: ./ui
@@ -36,46 +31,18 @@ jobs:
       
       - name: Build SvelteKit App
         working-directory: ./ui
-        run: |
-          echo "Building SvelteKit app with BASE_PATH=$BASE_PATH"
-          cat svelte.config.js
-          npm run build
-          echo "Build complete. Listing files in build directory:"
-          ls -la build/
-          # Create a .nojekyll file to prevent GitHub Pages from using Jekyll
-          touch build/.nojekyll
-          
-          # Check if index.html exists in the expected location
-          if [ ! -f "build/index.html" ]; then
-            echo "WARNING: No index.html found in build directory. This may indicate a build configuration issue."
-            
-            # Check if there's an index.html in a subdirectory
-            INDEX_FILES=$(find build -name "index.html")
-            if [ -n "$INDEX_FILES" ]; then
-              echo "Found index.html file(s) in subdirectories:"
-              echo "$INDEX_FILES"
-            fi
-            
-            # Create a simple redirect index.html at the root
-            echo "Creating a fallback index.html..."
-            echo '<!DOCTYPE html>' > build/index.html
-            echo '<html lang="en">' >> build/index.html
-            echo '<head>' >> build/index.html
-            echo '  <meta charset="UTF-8">' >> build/index.html
-            echo '  <meta name="viewport" content="width=device-width, initial-scale=1.0">' >> build/index.html
-            echo '  <title>Learning Journal</title>' >> build/index.html
-            echo '  <meta http-equiv="refresh" content="0;url=./laundry-journal/">' >> build/index.html
-            echo '</head>' >> build/index.html
-            echo '<body>' >> build/index.html
-            echo '  <p>Redirecting to the Learning Journal...</p>' >> build/index.html
-            echo '  <p>If you are not redirected, <a href="./laundry-journal/">click here</a>.</p>' >> build/index.html
-            echo '</body>' >> build/index.html
-            echo '</html>' >> build/index.html
-          fi
+        run: npm run build
         env:
           NODE_ENV: production
-          # Set base path for GitHub Pages - this should match your repository name
           BASE_PATH: '/laundry-journal'
+      
+      - name: Prepare for Deployment
+        working-directory: ./ui
+        run: |
+          touch build/.nojekyll
+          if [ ! -f "build/index.html" ]; then
+            echo '<html><head><meta http-equiv="refresh" content="0;url=./laundry-journal/"></head><body>Redirecting...</body></html>' > build/index.html
+          fi
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -83,8 +50,3 @@ jobs:
           folder: ui/build
           branch: svelte_frontend
           clean: true
-          
-      - name: Output Deployment Information
-        run: |
-          echo "Deployed to GitHub Pages"
-        echo "View your site at https://weedavedev.github.io/laundry-journal/"
