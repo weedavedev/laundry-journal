@@ -1,20 +1,35 @@
-name: Test GitHub Pages
+name: Build and Deploy
 on:
   push:
     branches: [ main ]
 jobs:
-  deploy-test-page:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup test page
-        run: |
-          mkdir -p test_page
-          echo '<html><head><title>Test Page</title></head><body><h1>Test Page</h1><p>If you can see this, GitHub Pages is working.</p></body></html>' > test_page/index.html
-          touch test_page/.nojekyll
+      - name: Checkout code
+        uses: actions/checkout@v3
       
-      - name: Deploy test page
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Copy Content
+        run: mkdir -p ui/src/content && cp -r content/*.md ui/src/content/
+      
+      - name: Install Dependencies
+        working-directory: ./ui
+        run: npm ci
+      
+      - name: Build
+        working-directory: ./ui
+        run: npm run build
+        env:
+          BASE_PATH: '/laundry-journal'
+      
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: test_page
-          branch: svelte_frontend
+          folder: ui/build  # This is the built content we want at the root
+          branch: gh-pages  # Using a new branch to avoid conflicts
           clean: true
