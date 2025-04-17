@@ -1,38 +1,43 @@
 <script>
+  import TableOfContents from '$lib/components/TableOfContents.svelte';
   export let data;
+
+  $: {
+    console.log('Page data:', data);
+  }
 </script>
 
 <div class="container">
-  <h1>Learning Journal</h1>
-  
+  <!-- Table of Contents component at the top -->
+  <TableOfContents files={data.markdownFiles || []} />
+
+  <!-- Main content area -->
   {#if data.markdownFiles && data.markdownFiles.length > 0}
-    {#each data.markdownFiles as file}
-      <div class="markdown-card">
-        <h2>{file.title}</h2>
-        
-        {#if file.date}
+    <div class="markdown-list">
+      {#each data.markdownFiles as file}
+        <article class="markdown-item" id={file.slug}>
+          <h2>{file.title || file.slug}</h2>
           <div class="metadata">
-            <span>Created: {file.date}</span>
-            {#if file.updated}
-              <span>Updated: {file.updated}</span>
+            {#if file.date}
+              <span class="date">Created: {new Date(file.date).toLocaleDateString()}</span>
+            {/if}
+            {#if file.updated && file.updated !== file.date}
+              <span class="date">Updated: {new Date(file.updated).toLocaleDateString()}</span>
+            {/if}
+            {#if file.tags && file.tags.length > 0}
+              <div class="tags">
+                {#each file.tags as tag}
+                  <span class="tag">{tag}</span>
+                {/each}
+              </div>
             {/if}
           </div>
-        {/if}
-        
-        {#if file.tags && file.tags.length > 0}
-          <div class="tags">
-            {#each file.tags as tag}
-              <span class="tag">{tag}</span>
-            {/each}
+          <div class="content">
+            {@html file.html}
           </div>
-        {/if}
-        
-        <div class="markdown-content">
-          <!-- Render the processed HTML now that we have it working -->
-          {@html file.html}
-        </div>
-      </div>
-    {/each}
+        </article>
+      {/each}
+    </div>
   {:else}
     <p>No markdown files found.</p>
   {/if}
@@ -40,107 +45,88 @@
 
 <style>
   .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 2rem 1rem;
   }
-  
-  .markdown-card {
-    margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+  .markdown-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  
-  h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
+
+  .markdown-item {
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
-  
+
   h2 {
-    font-size: 22px;
     margin-top: 0;
-    margin-bottom: 10px;
-    color: #24292e;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
   }
-  
+
   .metadata {
-    margin: 10px 0;
-    color: #586069;
-    font-size: 14px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
   }
-  
-  .metadata span {
-    margin-right: 15px;
+
+  .date {
+    margin-right: 1rem;
   }
-  
+
   .tags {
-    margin: 10px 0;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
-  
+
   .tag {
-    display: inline-block;
-    padding: 2px 8px;
-    margin-right: 5px;
-    background: #f1f8ff;
-    color: #0366d6;
-    border-radius: 12px;
-    font-size: 12px;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    padding: 0.2rem 0.8rem;
+    font-size: 0.8rem;
+    color: #555;
   }
-  
-  .markdown-content {
-    margin-top: 15px;
+
+  .content {
+    line-height: 1.6;
   }
-  
-  /* Styling for markdown content */
-  :global(.markdown-content h1) {
-    font-size: 24px;
-    border-bottom: 1px solid #eaecef;
-    padding-bottom: 0.3em;
-    margin-top: 24px;
-    margin-bottom: 16px;
+
+  /* Responsive layout */
+  @media (min-width: 768px) {
+    .markdown-list {
+      grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+    }
   }
-  
-  :global(.markdown-content h2) {
-    font-size: 20px;
-    border-bottom: 1px solid #eaecef;
-    padding-bottom: 0.3em;
-    margin-top: 24px;
-    margin-bottom: 16px;
-  }
-  
-  :global(.markdown-content h3) {
-    font-size: 18px;
-    margin-top: 24px;
-    margin-bottom: 16px;
-  }
-  
-  :global(.markdown-content p) {
-    margin-top: 0;
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  
-  :global(.markdown-content code) {
-    background-color: rgba(27,31,35,0.05);
-    border-radius: 3px;
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
-    font-size: 85%;
-    padding: 0.2em 0.4em;
-  }
-  
-  :global(.markdown-content pre) {
-    background-color: #f6f8fa;
-    border-radius: 3px;
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
-    font-size: 85%;
-    line-height: 1.45;
-    overflow: auto;
-    padding: 16px;
-    margin-top: 0;
-    margin-bottom: 16px;
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .markdown-item {
+      background-color: #252525;
+      border-color: #333;
+      color: #e0e0e0;
+    }
+
+    h2 {
+      color: #e0e0e0;
+      border-bottom-color: #444;
+    }
+
+    .metadata {
+      color: #aaa;
+    }
+
+    .tag {
+      background-color: #333;
+      color: #ccc;
+    }
   }
 </style>

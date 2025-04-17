@@ -48,9 +48,8 @@ const CONFIG = {
     
     // Components and utilities
     'src/lib/components/Layout.svelte',
-    'src/lib/components/md_tester.svelte',
-    'src/lib/components/TestComponent.svelte',
-    'src/lib/markdown-loader.js',
+    'src/lib/components/markdown-loader.js',
+    'src/lib/components/TableOfContents.svelte',
     'src/lib/index.ts',
     'src/scripts/generate-content-index.js'
   ]
