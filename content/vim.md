@@ -80,6 +80,10 @@ A - insert at end of line
 o - open new line below cursor
 O - open new line above cursor
 ```
+**Examples of barbaric things going on here!!! **:
+ohh well send this does it appear???
+
+
 
 **Examples**:
 ```
