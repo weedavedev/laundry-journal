@@ -27,12 +27,23 @@ jobs:
         env:
           BASE_PATH: '/laundry-journal'
       
-      - name: Add .nojekyll
+      - name: Prepare for Deployment
         working-directory: ./ui
-        run: touch build/.nojekyll
+        run: |
+          touch build/.nojekyll
+          echo "Files in build directory:"
+          ls -la build/
+          
+          # Ensure the redirect file exists and set proper permissions
+          if [ ! -f "build/index.html" ]; then
+            echo "Creating index.html"
+            echo '<html><head><meta http-equiv="refresh" content="0;url=./laundry-journal/"></head><body>Redirecting...</body></html>' > build/index.html
+            chmod 644 build/index.html
+          fi
       
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ui/build
           branch: svelte_frontend
+          clean: false  # Changed to false to avoid removing files
