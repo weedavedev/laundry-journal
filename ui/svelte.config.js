@@ -19,9 +19,9 @@ const config = {
     
     // If your GitHub Pages site is hosted at a subdirectory (e.g., username.github.io/learning-journal)
     // uncomment and set this:
-    // paths: {
-    //   base: '/learning-journal'
-    // }
+    paths: {
+      base: '/learning-journal'
+    }
   }
 };
 
