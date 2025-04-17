@@ -1,4 +1,4 @@
-import { getMarkdownBySlug } from '$lib/markdown-loader';
+import { getMarkdownBySlug } from '$lib/components/markdown-loader';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {

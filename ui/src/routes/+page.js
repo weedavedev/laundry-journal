@@ -1,5 +1,4 @@
-
-import { getAllMarkdownFiles } from '$lib/markdown-loader.js';
+import { getAllMarkdownFiles } from '$lib/components/markdown-loader.js';
 
 export async function load() {
   try {

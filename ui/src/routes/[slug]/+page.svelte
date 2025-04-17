@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import { getMarkdownBySlug } from '$lib/markdown-loader.js';
+  import { getMarkdownBySlug } from '$lib/components/markdown-loader.js';
 
   let markdownFile = null;
   let isLoading = true;
