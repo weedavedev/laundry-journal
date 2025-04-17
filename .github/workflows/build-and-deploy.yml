@@ -1,15 +1,14 @@
-name: Build and Deploy SvelteKit App
+name: Build and Deploy Learning Journal
+
 on:
   push:
     branches: [ main ]
     paths:
       - 'content/**'
       - 'ui/**'
-      - 'src/**'
       - '.github/workflows/**'
       - 'README.md'
-      - 'package.json'
-      - 'svelte.config.js'
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -23,19 +22,51 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: 'ui/package-lock.json'
       
-      - name: Install dependencies
+      - name: Copy Content to UI
+        run: |
+          # Ensure the content is available to the UI during build
+          mkdir -p ui/src/content
+          cp -r content/*.md ui/src/content/
+          echo "Content files copied to UI build location:"
+          ls -la ui/src/content/
+      
+      - name: Install Dependencies
+        working-directory: ./ui
         run: npm ci
       
-      - name: Build SvelteKit app
-        run: npm run build
-        
-      - name: Add .nojekyll file
-        run: touch build/.nojekyll
+      - name: Build SvelteKit App
+        working-directory: ./ui
+        run: |
+          echo "Building SvelteKit app with BASE_PATH=$BASE_PATH"
+          cat svelte.config.js
+          npm run build
+          echo "Build complete. Listing files in build directory:"
+          ls -la build/
+          # Create a .nojekyll file to prevent GitHub Pages from using Jekyll
+          touch build/.nojekyll
+          
+          # Create a basic index.html if it doesn't exist
+          if [ ! -f "build/index.html" ]; then
+            echo "WARNING: No index.html found in build directory. Creating a basic one..."
+            echo "<html><head><meta http-equiv=\"refresh\" content=\"0;url=/$GITHUB_REPOSITORY_NAME_PART/\"></head><body>Redirecting...</body></html>" > build/index.html
+          fi
+        env:
+          NODE_ENV: production
+          # Set base path for GitHub Pages - this should match your repository name
+          BASE_PATH: '/laundry-journal'
+          GITHUB_REPOSITORY_NAME_PART: "laundry-journal"
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build  # This should match your adapter-static output folder
+          folder: ui/build
           branch: svelte_frontend
           clean: true
+          
+      - name: Output Deployment Information
+        run: |
+          echo "Deployed to GitHub Pages"
+          echo "View your site at https://YOUR_USERNAME.github.io/Laundry_journal/"
+          echo "Note: Replace YOUR_USERNAME with your actual GitHub username"
