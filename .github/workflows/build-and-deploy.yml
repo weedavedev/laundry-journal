@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '18'
       
-      - name: Copy Content
+      - name: Copy Content to UI
         run: mkdir -p ui/src/content && cp -r content/*.md ui/src/content/
       
       - name: Install Dependencies
@@ -30,30 +30,14 @@ jobs:
           BASE_PATH: '/laundry-journal'
       
       - name: Create simple test page
-        run: |
-          mkdir -p test_deploy
-          echo '<html><head><title>Test Page</title></head><body><h1>Test Page</h1></body></html>' > test_deploy/index.html
-          touch test_deploy/.nojekyll
-          echo "Created test files:"
-          ls -la test_deploy/
+        run: echo '<html><head><title>Test Page</title></head><body><h1>Test Page</h1></body></html>' > ui/build/test.html
       
-      - name: Direct Debug Deploy
-        run: |
-          # Try direct upload to current branch
-          echo "Attempting direct copy to svelte_frontend branch"
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-          
-          # Checkout the svelte_frontend branch
-          git fetch origin svelte_frontend || echo "Failed to fetch svelte_frontend branch"
-          git checkout svelte_frontend || echo "Failed to checkout svelte_frontend branch"
-          
-          # Copy test files directly to root
-          cp test_deploy/index.html ./index.html
-          cp test_deploy/.nojekyll ./.nojekyll
-          
-          # Commit and push
-          git add index.html .nojekyll
-          git status
-          git commit -m "Add test index.html" || echo "Nothing to commit"
-          git push origin svelte_frontend || echo "Failed to push to svelte_frontend branch"
+      - name: Debug Contents
+        run: ls -la ui/build/
+      
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ui/build
+          force_orphan: true  # This creates a fresh branch with just our files
