@@ -6,7 +6,7 @@ tags: [vim, text-editor, linux, productivity]
 category: tools
 ---
 
-# Vim
+# Vim edited
 
 ## Table of Contents
 <!-- This section will be automatically generated -->
