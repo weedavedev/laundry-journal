@@ -1,49 +1,20 @@
-name: Build and Deploy
+name: Test GitHub Pages
 on:
   push:
     branches: [ main ]
 jobs:
-  build-and-deploy:
+  deploy-test-page:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
-      - name: Copy Content
-        run: mkdir -p ui/src/content && cp -r content/*.md ui/src/content/
-      
-      - name: Install Dependencies
-        working-directory: ./ui
-        run: npm ci
-      
-      - name: Build
-        working-directory: ./ui
-        run: npm run build
-        env:
-          BASE_PATH: '/laundry-journal'
-      
-      - name: Prepare for Deployment
-        working-directory: ./ui
+      - name: Setup test page
         run: |
-          touch build/.nojekyll
-          echo "Files in build directory:"
-          ls -la build/
-          
-          # Ensure the redirect file exists and set proper permissions
-          if [ ! -f "build/index.html" ]; then
-            echo "Creating index.html"
-            echo '<html><head><meta http-equiv="refresh" content="0;url=./laundry-journal/"></head><body>Redirecting...</body></html>' > build/index.html
-            chmod 644 build/index.html
-          fi
+          mkdir -p test_page
+          echo '<html><head><title>Test Page</title></head><body><h1>Test Page</h1><p>If you can see this, GitHub Pages is working.</p></body></html>' > test_page/index.html
+          touch test_page/.nojekyll
       
-      - name: Deploy
+      - name: Deploy test page
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ui/build
+          folder: test_page
           branch: svelte_frontend
-          clean: false  # Changed to false to avoid removing files
+          clean: true
