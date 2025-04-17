@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { getMarkdownBySlug } from '$lib/components/markdown-loader.js';
+  import { base } from '$app/paths';
 
   let markdownFile = null;
   let isLoading = true;
@@ -62,7 +63,7 @@
   <header>
     <div class="header-content">
       <div class="header-left">
-        <a href="/" class="back-link">← Back to List</a>
+        <a href="{base}/" class="back-link">← Back to List</a>
         <h1>Learning Journal</h1>
       </div>
       <button class="theme-toggle" on:click={toggleDarkMode}>
