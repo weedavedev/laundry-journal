@@ -15,40 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      # Create test index file from a separate source file
+      # Create a simple test HTML file
       - name: Create test index file
         run: |
           mkdir -p test_deploy
           # Create a .nojekyll file to disable Jekyll processing
           touch test_deploy/.nojekyll
+          # Create a simple HTML test file
+          echo "<html><head><title>Test Page</title></head><body><h1>Test Deployment</h1><p>This is a test page to verify GitHub Pages deployment is working.</p></body></html>" > test_deploy/index.html
           
-          # Create index.html with a simpler approach
-          echo '<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learning Journal Test Page</title>
-  <style>
-    body { font-family: -apple-system, sans-serif; margin: 0 auto; max-width: 800px; padding: 2rem; line-height: 1.6; }
-    h1 { color: #0969da; }
-    pre { background-color: #f6f8fa; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-  </style>
-</head>
-<body>
-  <h1>Learning Journal Test Page</h1>
-  <p>This is a test page to verify GitHub Pages deployment.</p>
-  <h2>Content Files</h2>
-  <p>Test page content loaded successfully.</p>
-  <h2>Next Steps</h2>
-  <p>If you can see this page, the basic GitHub Pages setup is working correctly.</p>
-</body>
-</html>' > test_deploy/index.html
-          
-          echo "Created test index.html and .nojekyll"
-          ls -la test_deploy/
-      
-      # Deploy just the test page first
+      # Deploy the test page to GitHub Pages
       - name: Deploy test page to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
@@ -59,4 +35,4 @@ jobs:
       - name: Output test page information
         run: |
           echo "Deployed test page to GitHub Pages"
-        echo "View your site at https://weedavedev.github.io/laundry-journal/"
+          echo "View your site at https://weedavedev.github.io/laundry-journal/"
