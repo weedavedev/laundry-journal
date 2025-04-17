@@ -1,16 +1,10 @@
-name: Build and Deploy Learning Journal
+name: Build and Deploy
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'content/**'
-      - 'ui/**'
-      - '.github/workflows/**'
-      - 'README.md'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,34 +13,26 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'ui/package-lock.json'
       
-      - name: Copy Content to UI
+      - name: Copy Content
         run: mkdir -p ui/src/content && cp -r content/*.md ui/src/content/
       
       - name: Install Dependencies
         working-directory: ./ui
         run: npm ci
       
-      - name: Build SvelteKit App
+      - name: Build
         working-directory: ./ui
         run: npm run build
         env:
-          NODE_ENV: production
           BASE_PATH: '/laundry-journal'
       
-      - name: Prepare for Deployment
+      - name: Add .nojekyll
         working-directory: ./ui
-        run: |
-          touch build/.nojekyll
-          if [ ! -f "build/index.html" ]; then
-            echo '<html><head><meta http-equiv="refresh" content="0;url=./laundry-journal/"></head><body>Redirecting...</body></html>' > build/index.html
-          fi
+        run: touch build/.nojekyll
       
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ui/build
           branch: svelte_frontend
-          clean: true
