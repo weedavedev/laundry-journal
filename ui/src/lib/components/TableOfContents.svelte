@@ -1,4 +1,6 @@
 <script>
+  import { base } from '$app/paths';
+
   export let files = [];
   
   // Group files by category
@@ -28,7 +30,7 @@
       <ul>
         {#each filesByCategory[category] as file}
           <li>
-            <a href="/{file.slug}">{file.title || file.slug}</a>
+            <a href="{base}/{file.slug}">{file.title || file.slug}</a>
           </li>
         {/each}
       </ul>
