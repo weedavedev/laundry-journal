@@ -20,7 +20,7 @@ const config = {
     }),
     
     paths: {
-      base: '/laundry-journal'
+	    base: process.env.NODE_ENV === 'production' ? '/laundry-journal' : ''
     },
     
     // This is important - it tells SvelteKit to prerender the index page
