@@ -12,58 +12,68 @@ category: operating-systems
 <!-- This section will be automatically generated -->
 
 ## Overview
-Learnings of Linux and how the master OS works.
-Main OS is Ubuntu. 
+This is a collection of my linux based learnings since summer 2024. I have been studying from a variety of sources, mainly the internet, boot.dev, claude for helpful comments and of course some old school paper!
+The OS of choice is Ubuntu, with my interest in cyber security i have dabbled with kali, but lets stick to more solid understandings of ubuntu, of course alot of commands work on both, because linux is awesome!  
 
 ## Fundamentals
-Some of the basic Linux commands I initially wrote down, and some that I have actually used a lot!h bla ksakdasd
+Some of the basic Linux commands I initially wrote down, and some that I have actually used a lot!
 
 ### System Information
 Some of the most basic and useful tools in Linux are just a few characters away, quicker than going via control panel in Windows!
 
+**First commands to know ** 
+```
+cd <path> - change directory, no path = $HOME, 'cd -' returns to previous dir
+history - will show all command per terminal, use grep! ( history | grep cd )
+ctrl + r - search back through command history
+ctrl + L - clears console (clear - also works)
+```
+
 **Commands list**
 ```
+who - show all logged in users
 whoami - show current username
 uname - OS name and hardware details
 hostname - current host name
 pwd - show the present working directory
 ```
 
-**Examples**:
-```
-$ whoami
-username
-
-$ uname -a
-Linux hostname 5.15.0-89-generic #99-Ubuntu SMP Wed Feb 7 12:24:14 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
-```
-
-**Notes**:
-- These commands work across most Linux distributions
-- Many have additional options with flags like `-a` for "all"
-
 ### System Resources
 **Purpose**: There is a lot of useful information inside your computer. These are some of the easiest ways to extract that information in Linux.
 
-**Syntax/Format**: 
+**Show system pheriphals**: 
 ```
 lsblk - show all block devices (#storage)
 lsusb - show all connected USB devices
 lsof - show all open files
 lspci - show all PCI devices connected (#graphics)
 ```
-
-**Examples**:
+**Show system resource usage**
 ```
-$ lsblk -f
-NAME   FSTYPE   LABEL UUID                                 MOUNTPOINT
-sda                                                        
-├─sda1 ext4           6197e068-42a7-4d0c-aa3a-fd9b0ce87332 /
-└─sda2 swap           4f2635d8-e6e0-4c19-8228-23787769c321 [SWAP]
+top - native system overview
+glances - a nice interface to show system resources
+ps - process status commonly used with aux (flags: -user)
+
+```
+**Show system variables**
+```
+env - show enviroment variables, grep'n is recomended!
 ```
 
+**Network tools**
+```
+ifconfig - show routing, network and interfaces (flags: -a -s)
+ip - replcaed ifconfig. 
+netstat - network status
+ss - socket status 
+ping - we all know ping 
+traceroute - show the route through the network 
+tcpdump - show all tcp connections
+wireshare - show network traffic (big topic, another day) #TODO : wireshark
+nmap - (Lets do this well another day) #TODO : nmap
+```
 **Notes**:
-- The `ls` prefix stands for "list"
+- The `ls` prefix stands for "list" so lsblk is list all blk's 
 - These commands often need root privileges to show all information
 
 ## File System Navigation
@@ -78,17 +88,27 @@ ls - list directory contents
 cd - change directory
 cat - view file contents
 less - view file contents with pagination
+tail - show the last of a file (-n 10 = last 10 lines, -f follows the file)
+grep - search for terms in files (upgraded to rgrep) #TODO : rgep 
 ```
+**Example** 
+We can use grep to search these .md files for all TODO notes with the command 
+- grep linux.md "#TODO"
 
-**Examples**:
+### File managment
 ```
-$ ls -la
-total 20
-drwxr-xr-x 3 user user 4096 Apr  2 10:30 .
-drwxr-xr-x 6 user user 4096 Apr  2 10:25 ..
--rw-r--r-- 1 user user  123 Apr  2 10:30 example.txt
+touch - create a new file
+mkdir - new directory
+tree show all files in a tree structure 
+mv <current location> <new location>
+cp <current file> <new file> 
 ```
+**Example **
+cp - all_files/in/here/* move/here/
 
-**Notes**:
-- Use `cd ..` to move up one directory
-- Use `cd ~` to go to your home directory
+### Package managment 
+** Choice of package managers **
+``` 
+pkg
+apt
+```
