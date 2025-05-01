@@ -1,5 +1,7 @@
 [
   "TEMPLATE.md",
+  "docker.md",
   "linux.md",
+  "regex.md",
   "vim.md"
 ]
