@@ -19,7 +19,7 @@ This is probably one of those things you will never fully understand if you have
 
 Jokes aside simple regex is easy to understand and very useful, and for everything slightly more complicated there is regex generators, and these days we can just use something like claude to generate it. If these resources are used properly its super powerful, and i personally feel a really good use of an LLM, similar to writting massive LUA config files, i dont want to be a LUA expert, i want to know how to read them and use it efficiently. 
 
-### Subsection 1.1
+### Stage 1, wtf is REGEX?
 
 **Purpose**: What this concept/command/technique is used for.
 
