@@ -4,9 +4,6 @@ on:
     branches: 
       - main
       - svelte_frontend
-    paths:
-      - 'content/**'
-      - 'ui/**'
   workflow_dispatch:
 
 permissions:
@@ -25,17 +22,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: svelte_frontend
+          ref: ${{ github.ref_name }}
       
-      # If triggered from main branch content change, sync content
-      - name: Check if triggered by main branch content
-        id: check_trigger
+      # Check which branch triggered the workflow
+      - name: Check branch
+        id: check_branch
         run: |
-          REF_NAME="${{ github.ref_name }}"
-          echo "triggered_by_main=$([[ $REF_NAME == 'main' ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
       
+      # If on svelte_frontend branch, get content from main
       - name: Get content from main branch if needed
-        if: steps.check_trigger.outputs.triggered_by_main == 'true'
+        if: steps.check_branch.outputs.branch == 'svelte_frontend'
         uses: actions/checkout@v4
         with:
           ref: main
@@ -44,29 +41,55 @@ jobs:
             content
           sparse-checkout-cone-mode: false
       
-      - name: Copy content if from main branch
-        if: steps.check_trigger.outputs.triggered_by_main == 'true'
+      - name: Copy content if on svelte_frontend branch
+        if: steps.check_branch.outputs.branch == 'svelte_frontend'
         run: |
           mkdir -p content
           cp -r temp-main/content/* ./content/
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add content/
-          git commit -m "Update content from main branch" || echo "No changes to commit"
-          git push
       
-      # Normal build process now proceeds
+      # Setup and build
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
       
       - name: Copy Content to UI
-        run: mkdir -p ui/src/content && cp -r content/*.md ui/src/content/
+        run: |
+          # Determine the correct source path based on branch
+          if [[ "${{ steps.check_branch.outputs.branch }}" == "main" ]]; then
+            SOURCE_PATH="./content"
+          else
+            SOURCE_PATH="./content"
+          fi
+          
+          mkdir -p ui/src/content
+          cp -r ${SOURCE_PATH}/*.md ui/src/content/
       
       - name: Install Dependencies
         working-directory: ./ui
         run: npm ci
+      
+      - name: Ensure paths in svelte.config.js
+        working-directory: ./ui
+        run: |
+          # Create or update lib/config.js with base path
+          mkdir -p src/lib
+          echo "export const BASE_PATH = '/laundry-journal';" > src/lib/config.js
+          
+          # Check if svelte.config.js exists and update it
+          if [ -f "svelte.config.js" ]; then
+            # Make a backup
+            cp svelte.config.js svelte.config.js.bak
+            
+            # Check if paths.base is already in the config
+            if grep -q "paths:" svelte.config.js && grep -q "base:" svelte.config.js; then
+              # Update the existing base path
+              sed -i "s|base:.*|base: '/laundry-journal',|" svelte.config.js
+            else
+              # Add paths.base to the config
+              sed -i "/kit:.*{/a \ \ \ \ paths: { base: '/laundry-journal' }," svelte.config.js
+            fi
+          fi
       
       - name: Build Svelte App
         working-directory: ./ui
@@ -76,6 +99,40 @@ jobs:
       
       - name: Create .nojekyll file
         run: touch ui/build/.nojekyll
+      
+      - name: Create 404.html for SPA routing
+        run: |
+          cat > ui/build/404.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Redirecting...</title>
+            <script>
+              // Redirect to the root with the path as a query parameter
+              const segment = window.location.pathname.replace('/laundry-journal/', '');
+              window.location.href = '/laundry-journal/?path=' + encodeURIComponent(segment);
+            </script>
+          </head>
+          <body>
+            Redirecting...
+          </body>
+          </html>
+          EOF
+          
+          # Add redirect handling to index.html
+          if [ -f "ui/build/index.html" ]; then
+            sed -i '/<head>/a \
+            <script>\
+              // Handle redirects from 404.html\
+              const urlParams = new URLSearchParams(window.location.search);\
+              const redirectPath = urlParams.get("path");\
+              if (redirectPath) {\
+                // Remove the query parameter\
+                window.history.replaceState(null, null, "/laundry-journal/" + redirectPath);\
+              }\
+            </script>' ui/build/index.html
+          fi
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
