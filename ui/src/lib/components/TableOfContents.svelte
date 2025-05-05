@@ -31,7 +31,6 @@
         {#each filesByCategory[category] as file}
           <li>
             <a href="{base}/{file.slug}">{file.title || file.slug}</a>
-            <!-- ^^^^^^^ Add base path here -->
           </li>
         {/each}
       </ul>

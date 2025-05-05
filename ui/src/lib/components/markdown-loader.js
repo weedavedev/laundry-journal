@@ -76,6 +76,30 @@ export async function getAllMarkdownFiles() {
 }
 
 export async function getMarkdownBySlug(slug) {
+  console.log(`Looking for markdown with slug: "${slug}"`);
   const files = await getAllMarkdownFiles();
-  return files.find(file => file.slug === slug);
+  
+  if (files.length === 0) {
+    console.error('No markdown files were loaded at all!');
+    return null;
+  }
+  
+  console.log(`Found ${files.length} total files with slugs:`, files.map(f => f.slug));
+  
+  const matchedFile = files.find(file => file.slug === slug);
+  
+  if (matchedFile) {
+    console.log(`Found matching file for slug "${slug}": ${matchedFile.title}`);
+  } else {
+    console.error(`No match found for slug "${slug}"`);
+    // Try to find similar slugs to help diagnose the issue
+    const similarSlugs = files.filter(file => 
+      file.slug.includes(slug) || slug.includes(file.slug)
+    ).map(f => f.slug);
+    if (similarSlugs.length > 0) {
+      console.log('Similar slugs found:', similarSlugs);
+    }
+  }
+  
+  return matchedFile;
 }
